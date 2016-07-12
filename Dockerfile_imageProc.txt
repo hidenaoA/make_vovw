@@ -1,0 +1,23 @@
+FROM		osrf/ros:indigo-desktop-full
+MAINTAINER	Hidenao Abe
+RUN 		apt-get -y update
+RUN		apt-get -y install wget unzip ssh checkinstall
+RUN		apt-get  -y install python-pip python-setuptools liblapack-dev gfortran python-numpy python-scipy
+RUN		pip install scikit-learn
+RUN		apt-get -y install build-essential libgtk2.0-dev libjpeg-dev libtiff4-dev libjasper-dev libopenexr-dev cmake python-dev python-tk libtbb-dev libeigen3-dev yasm libopencore-amrnb-dev libopencore-amrwb-dev libtheora-dev libvorbis-dev libxvidcore-dev libx264-dev libqt4-dev libqt4-opengl-dev sphinx-common texlive-latex-extra libv4l-dev libdc1394-22-dev libavcodec-dev libavformat-dev libswscale-dev default-jdk ant libvtk5-qt4-dev
+RUN		set -x &&\
+ mkdir /root/work &&\
+ mkdir /root/work/download &&\
+ cd /root/work/download &&\
+ wget http://downloads.sourceforge.net/project/opencvlibrary/opencv-unix/3.1.0/opencv-3.1.0.zip &&\
+ unzip opencv-3.1.0.zip &&\
+ cd opencv-3.1.0 &&\
+ mkdir build &&\
+ cd build &&\
+ cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D WITH_TBB=ON -D BUILD_NEW_PYTHON_SUPPORT=ON -D WITH_V4L=ON -D WITH_FFMPEG=OFF -D BUILD_opencv_python2=ON .. &&\
+ make install &&\
+ checkinstall -y &&\
+ sh -c 'echo "/usr/local/lib" > /etc/ld.so.conf.d/opencv.conf' &&\
+ ldconfig
+RUN mkdir /root/docker_home
+
